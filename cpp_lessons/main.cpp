@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-
+#include <fstream>
 using namespace std;
 
 
@@ -79,6 +79,23 @@ void PrintStudent(const Student& s)
 	cout << "Name: " << s.name
 		<< "\tScore: " << s.score << endl;
 }
+Student LoadStudent()
+{
+	ifstream fin;
+	fin.open("data.txt", ios::in);
+	Student s;
+	fin >> s.name;
+	fin >> s.score;
+	fin.close();
+	return s;
+}
+void SaveStudent(const Student& s)
+{
+	ofstream fout;
+	fout.open("data.txt", ios::out);
+	fout << s.name << endl << s.score << endl;
+	fout.close();
+}
 void EditStudent(Student& s)
 {
 	s.score -= 0.2;
@@ -92,6 +109,6 @@ int main()
 	Student st = InputStudent();
 	PrintStudent(st);
 	EditStudent(st);
-	PrintStudent(st);
+	SaveStudent(st);
 	return 0;
 }
