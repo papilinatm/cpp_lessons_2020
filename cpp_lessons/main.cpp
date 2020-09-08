@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 void LearnTypes()
 {
 	cout << "Please enter values: " << endl;
@@ -64,11 +65,33 @@ void LearnStruct()
 	group[0].score -= 0.5;
 
 }
+Student InputStudent()
+{
+	Student s;
+	cout << "Type name:";
+	cin >> s.name;
+	cout << "Type score:";
+	cin >> s.score;
+	return s;
+}
+void PrintStudent(const Student& s)
+{
+	cout << "Name: " << s.name
+		<< "\tScore: " << s.score << endl;
+}
+void EditStudent(Student& s)
+{
+	s.score -= 0.2;
+}
 int main()
 {
 	//Hello();
 	//LearnTypes();
 	//LearnMass();
 	//LearnStruct();
+	Student st = InputStudent();
+	PrintStudent(st);
+	EditStudent(st);
+	PrintStudent(st);
 	return 0;
 }
