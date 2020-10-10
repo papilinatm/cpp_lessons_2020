@@ -3,39 +3,17 @@
 #include <fstream>
 using namespace std;
 
-
-void LearnTypes()
+template <typename T>
+T GetCorrectNumber(T min, T max)
 {
-	cout << "Please enter values: " << endl;
-	int x = 0;
-	float f = 0;
-	double d = 0;
-	char ch = 'A';
-	bool b = true;
-	cin >> x >> f >> d >> ch >> b;
-
-	cout << x + 1 << endl
-		<< x - 1 << endl
-		<< x * 2 << endl
-		<< x / 2. << endl
-		<< (double)x / 2 << endl
-		<< x % 2 << endl;
-	x += 2;// x = x + 2;
-	int a1 = x++;// x=x+1; // x+=1;
-	x--;
-	int a2 = ++x;
-	--x;
-
-	cout << (x >> 1) << endl; //111 >> 11
-	cout << (x << 1) << endl; //111 << 1110
-}
-
-void Hello()
-{
-	string s;
-	cout << "Type your name, please: ";
-	cin >> s;//string with spaces
-	cout << "Hello " << s << endl;
+	T x;
+	while ((cin >> x).fail() || x < min || x>max)
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "Type number (" << min << "-" << max<<"):";
+	} 
+	return x;
 }
 
 struct Student
@@ -43,72 +21,125 @@ struct Student
 	string name;
 	double score;
 };
-void LearnMass()
+bool IsScoreCorrect(double d)
 {
-	int mass[5][2] = { };
-	vector <int> v;
-	size_t n = 0;
-	cin >> n;
-	v.resize(n);
+	return d >= 2 && d <= 5;
 }
-
-void LearnStruct()
-{
-	vector <Student> group;
-	size_t n = 0;
-	cin >> n;
-	group.resize(n);
-	/*Student s = { "Ivan", 5 };
-	group[0] = s;
-	s.score -= 0.5;//why?!*/
-	group[0] = { "Ivan", 5 };
-	group[0].score -= 0.5;
-
-}
-Student InputStudent()
+Student LoadStudent(ifstream& fin)
 {
 	Student s;
-	cout << "Type name:";
-	cin >> s.name;
-	cout << "Type score:";
-	cin >> s.score;
-	return s;
-}
-void PrintStudent(const Student& s)
-{
-	cout << "Name: " << s.name
-		<< "\tScore: " << s.score << endl;
-}
-Student LoadStudent()
-{
-	ifstream fin;
-	fin.open("data.txt", ios::in);
-	Student s;
+
 	fin >> s.name;
 	fin >> s.score;
-	fin.close();
+
 	return s;
 }
-void SaveStudent(const Student& s)
+void SaveStudent(ofstream& fout, const Student& s)
 {
-	ofstream fout;
-	fout.open("data.txt", ios::out);
 	fout << s.name << endl << s.score << endl;
-	fout.close();
 }
 void EditStudent(Student& s)
 {
 	s.score -= 0.2;
+	s.score = IsScoreCorrect(s.score) ? s.score : 2;
+
 }
+void PrintMenu()
+{
+	cout << "1. Input student" << endl
+		<< "2. Print student" << endl
+		<< "3. Save to file" << endl
+		<< "4. Load from file" << endl
+		<< "5. Edit student" << endl
+		<< "0. Exit" << endl
+		<< "Choose action: ";
+}
+
+ostream& operator << (ostream& out, const Student& s)
+{
+	out << "Name: " << s.name
+		<< "\tScore: " << s.score << endl;
+	return out;
+}
+istream& operator >> (istream& in, Student& s)
+{
+	cout << "Type name: ";
+	in >> s.name;
+	cout << "Type score: ";
+	s.score = GetCorrectNumber(2.0, 5.0);
+	return in;
+}
+
+Student& SelectStudent(vector<Student>& g)
+{
+	cout << "Enter index: ";
+	unsigned int index = GetCorrectNumber(1u, g.size());
+	return g[index - 1];
+}
+
 int main()
 {
-	//Hello();
-	//LearnTypes();
-	//LearnMass();
-	//LearnStruct();
-	Student st = InputStudent();
-	PrintStudent(st);
-	EditStudent(st);
-	SaveStudent(st);
+	vector <Student> group;
+	while (1)
+	{
+		PrintMenu();
+
+		switch (GetCorrectNumber(0,5))
+		{
+		case 1:
+		{
+			Student st;
+			cin >> st;
+			group.push_back(st);
+			break;
+		}
+		case 2:
+		{
+			for (auto& st: group)
+			cout << st << endl;
+			break;
+		}
+		case 3:
+		{
+			ofstream fout;
+			fout.open("data.txt", ios::out);
+			if (fout.is_open())
+			{
+				fout << group.size() << endl;
+				for (Student& st : group)
+					SaveStudent(fout, st);
+				fout.close();
+			}
+			break;
+		}
+		case 4:
+		{
+			ifstream fin;
+			fin.open("data.txt", ios::in);
+			if (fin.is_open())
+			{
+				int count;
+				fin >> count;
+				while (count--)
+					group.push_back(LoadStudent(fin));
+				fin.close();
+			}
+			break;
+		}
+		case 5:
+		{
+			EditStudent(SelectStudent(group));
+			break;
+		}
+		case 0:
+		{
+			return 0;
+		}
+		default:
+		{
+			cout << "Wrong action" << endl;
+		}
+		}
+	}
 	return 0;
 }
