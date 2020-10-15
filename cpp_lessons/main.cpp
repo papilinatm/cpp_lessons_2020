@@ -1,26 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "Student.h"
+#include "utils.h"
+
 using namespace std;
 
-template <typename T>
-T GetCorrectNumber(T min, T max)
-{
-	T x;
-	while ((cin >> x).fail() || x < min || x>max)
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Type number (" << min << "-" << max<<"):";
-	} 
-	return x;
-}
-
-struct Student
-{
-	string name;
-	double score;
-};
 bool IsScoreCorrect(double d)
 {
 	return d >= 2 && d <= 5;
@@ -40,8 +25,9 @@ void SaveStudent(ofstream& fout, const Student& s)
 }
 void EditStudent(Student& s)
 {
-	s.score -= 0.2;
-	s.score = IsScoreCorrect(s.score) ? s.score : 2;
+	s.PassExam();
+	/*s.score -= 0.2;
+	s.score = IsScoreCorrect(s.score) ? s.score : 2;*/
 
 }
 void PrintMenu()
@@ -55,20 +41,6 @@ void PrintMenu()
 		<< "Choose action: ";
 }
 
-ostream& operator << (ostream& out, const Student& s)
-{
-	out << "Name: " << s.name
-		<< "\tScore: " << s.score << endl;
-	return out;
-}
-istream& operator >> (istream& in, Student& s)
-{
-	cout << "Type name: ";
-	in >> s.name;
-	cout << "Type score: ";
-	s.score = GetCorrectNumber(2.0, 5.0);
-	return in;
-}
 
 Student& SelectStudent(vector<Student>& g)
 {
@@ -84,7 +56,7 @@ int main()
 	{
 		PrintMenu();
 
-		switch (GetCorrectNumber(0,5))
+		switch (GetCorrectNumber(0, 5))
 		{
 		case 1:
 		{
@@ -95,8 +67,8 @@ int main()
 		}
 		case 2:
 		{
-			for (auto& st: group)
-			cout << st << endl;
+			for (auto& st : group)
+				cout << st << endl;
 			break;
 		}
 		case 3:
@@ -121,7 +93,9 @@ int main()
 				int count;
 				fin >> count;
 				while (count--)
+				{
 					group.push_back(LoadStudent(fin));
+				}
 				fin.close();
 			}
 			break;
