@@ -8,7 +8,7 @@ Student::Student()
 {
 	//cout << "Student::Student()" << endl;
 	id = MaxID++;
-	score = 5;
+	score = 5 - id;
 	name = "Unknown";
 }
 
@@ -46,6 +46,7 @@ void Student::PassExam()
 {
 	score += rand() % 2 ? -0.1 : 0.1;
 }
+
 ostream& operator << (ostream& out, const Student& s)
 {
 	out << "MaxID: " << Student::MaxID

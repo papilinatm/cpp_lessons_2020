@@ -37,6 +37,7 @@ void PrintMenu()
 		<< "3. Save to file" << endl
 		<< "4. Load from file" << endl
 		<< "5. Edit student" << endl
+		<< "6. Find students by name" << endl
 		<< "0. Exit" << endl
 		<< "Choose action: ";
 }
@@ -49,14 +50,59 @@ Student& SelectStudent(vector<Student>& g)
 	return g[index - 1];
 }
 
+vector<int> FindStudentsByName(const vector<Student>& group, string name="Unknown")
+{
+	vector <int> res;
+	int i = 0;
+	for (auto& s : group)
+	{
+		if (s.name == name)
+			res.push_back(i);
+		i++;
+	}
+
+	return res;
+}
+template<typename T>
+using Filter = bool(*)(const Student & s, T param);
+
+bool CheckByName(const Student& s, string param)
+{
+	return s.name == param;
+}
+bool CheckByScore(const Student& s, double param)
+{
+	return s.score >= param;
+}
+
+template<typename T>
+vector<int> FindStudentsByFilter(const vector<Student>& group, Filter<T> f, T param)
+{
+	vector <int> res;
+	int i = 0;
+	for (auto& s : group)
+	{
+		if (f(s, param))
+			res.push_back(i);
+		i++;
+	}
+
+	return res;
+}
+
+
 int main()
 {
 	vector <Student> group;
+
+	group.resize(3);
+
+
 	while (1)
 	{
 		PrintMenu();
 
-		switch (GetCorrectNumber(0, 5))
+		switch (GetCorrectNumber(0, 6))
 		{
 		case 1:
 		{
@@ -103,6 +149,17 @@ int main()
 		case 5:
 		{
 			EditStudent(SelectStudent(group));
+			break;
+		}
+		case 6:
+		{
+			string name = "Unknown";
+			for (int i : FindStudentsByFilter(group, CheckByName, name))
+				cout<<group[i];
+			
+			for (int i : FindStudentsByFilter(group, CheckByScore, 4.0))
+				cout<<group[i];
+
 			break;
 		}
 		case 0:
