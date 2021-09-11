@@ -46,7 +46,7 @@ void PrintMenu()
 Student& SelectStudent(vector<Student>& g)
 {
 	cout << "Enter index: ";
-	unsigned int index = GetCorrectNumber(1u, g.size());
+	unsigned int index = GetCorrectNumber<uint64_t>(1, g.size());
 	return g[index - 1];
 }
 
