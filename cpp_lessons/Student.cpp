@@ -49,16 +49,19 @@ void Student::PassExam()
 
 ostream& operator << (ostream& out, const Student& s)
 {
-	out << "MaxID: " << Student::MaxID
-		<< " Id: " << s.id
-		<< " Name: " << s.name
-		<< "\tScore: " << s.score << endl;
+	PRINT_PARAM(cout, s.id);
+	PRINT_PARAM(cout, s.name);
+	PRINT_PARAM(cout, s.score);
+	//out << "MaxID: " << Student::MaxID
+	//	<< " Id: " << s.id
+	//	<< " Name: " << s.name
+	//	<< "\tScore: " << s.score << endl;
 	return out;
 }
 istream& operator >> (istream& in, Student& s)
 {
 	cout << "Type name: ";
-	in >> s.name;
+	INPUT_LINE(in, s.name);
 	cout << "Type score: ";
 	s.score = GetCorrectNumber(2.0, 5.0);
 	return in;

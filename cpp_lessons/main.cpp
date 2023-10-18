@@ -3,8 +3,11 @@
 #include <fstream>
 #include "Student.h"
 #include "utils.h"
+#include <chrono>
+#include <format>
 
 using namespace std;
+using namespace chrono;
 
 bool IsScoreCorrect(double d)
 {
@@ -93,6 +96,11 @@ vector<int> FindStudentsByFilter(const vector<Student>& group, Filter<T> f, T pa
 
 int main()
 {
+	redirect_output_wrapper cerr_out(cerr);
+	string time = std::format("{:%d_%m_%Y %H_%M_%OS}", system_clock::now());
+	ofstream logfile("log_"+ time);
+	if (logfile)
+		cerr_out.redirect(logfile);
 	vector <Student> group;
 
 	group.resize(3);
